@@ -1,0 +1,44 @@
+01: Installation and Configuration
+
+Before starting development, we have to install the needed software. I am using a Mac, but on other systems, you can create the OS as well.
+
+First of all, we need a few things:
+
+1. I have installed brew on mac Mac, which can install a lot of open source software by fetching the source code, compiling and installing it. You can get it via a simple Terminal command.
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+
+2. Next install NASM, the Netwide Assembler. IT will output a flat binary, which we can throw at the virtual machine. In Terminal, just type:
+
+brew install nasm
+
+If it was correctly installed, you can run it by calling in Terminal:
+
+nasm
+
+It should give you an error message like "nasm: fatal: no input file specified"
+
+
+3. Now, you install a virtual machine, something, that will simulate a PC with a clear set of possible functions. Our PC needs a PS/2-Mouse, a 80286, a VGA, Soundblaster or Gravis Ultrasound and a network card, like the NE2000. My choice is QEMU, but you can also go for BOCHS. In Terminal type:
+
+brew install qemu
+
+We will only need the x86/x64-thing, which will be qemu-system-x86_64. You should test it, by running the virtual machine in Terminal.
+
+qemu-system-x86_64
+
+If you clicked the Terminal-window, and the mouse is gone, just press Control-Option-G to release the mouse. QEMU will show CTRL-ALT-G in the window-header as well.
+
+4. And finally, install a decent text-editor with offers syntax highlighting for the 8086-Assembler language. My weapon of choice is BBEdit, but you can also use Atom or even MS Visual Studio Code. For BBEdit, you have to download the NASM-highlighting from the link below, and copy the plist to ~/Library/Application Support/BBEdit/Language Modules
+
+5. For reading the binary output, I use the excellent 0xed.
+
+6. There is no step 6.
+
+[2] Software
+Brew: https://brew.sh
+BBEdit: https://barebones.com/products/bbedit/
+NASM-Syntax for BBEdit: https://www.barebones.com/support/bbedit/plugin_library.html
+Atom: https://atom.io
+NASM: https://nasm.us
+0xed: https://www.suavetech.com/0xed/
+

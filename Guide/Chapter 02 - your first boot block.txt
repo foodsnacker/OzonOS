@@ -1,0 +1,135 @@
+02. First Boot Block
+
+After having set up the system, you should create a folder for your to be written software. As we are coding a small Operating System, my folder is called Ozon-OS.
+
+Back in 1993, we started a small thing with Turbo Pascal, which was able to output binaries to be written to disk. It was kind of magic, as there was no official way to do this, but... nonetheless, we got it working after about 3 weeks.
+
+What to expect from Chapter 02:
+Writing a few lines of code, compiling it with NASM, exporting to a Disk image, running it with QEMU. This one should remove the "insert boot disk"-message, clear the screen and write "Hello, World.". Piece of cake.
+
+First things first. The BIOS (which will be the routines running, when the PC is switched on), has a simple task. First it tests the PC, the it will look for a disk or hard drive - or something else to be booted. If there is only a disk in drive, it will look for the first sector on the first track.
+
+Then the BIOS will load the first 512 Bytes. A disk normally is divided into 9 sectors per track and e.g. 40 or 80 tracks. The most common 5,25" disk had 9 * 40 * 512 * 2 (sides) = 360 kb. The standard size 3,5" disks were 18 * 80 * 512 * 2 (sides) = 1440 kb. There are many more formats, but these are the two of the most important for IBM-PC-compatibles. See the links below to learn more.
+
+Back to the boot block. As said, the BIOS will load the very first sector of the first track of the first side. The 512 bytes are written to position $7c00 in RAM, and jump into the memory position. A boot block has to have 512 bytes, and it must end with the two bytes $55 $aa - the boot sector signature. 
+
+Let's build something...
+
+
+simpleboot.asm
+
+use16						; we like to use 16 Bits Real Mode
+ORG 0x7C00					; the boot block is read into memory at $7c00
+
+jmp $						; Stall. $ is the current memory address, so it stays here.
+
+times 510-($-$$) db 0		; the boot block has to be exactly 512 bytes. the $-$$
+							; calculates the size of the code itself.
+
+dw 0xaa55					; this is the boot sector signature. Keep in mind, that
+							; Intel-CPUs are little ending first, so the $aa is first
+
+The small snippet will be put into hello_world.asm. Then compile with
+
+nasm boot hello_world.asm -f bin -o boot hello_world.bin
+
+If you have a look at the code with 0xed, you will see that our code only needs a few bytes in the beginning, and two bytes in the end.
+
+Now run the new image with QEMU
+
+qemu-system-x86_64 hello_world.bin
+
+As you can see, the message "insert boot disk" vanished.
+
+Next up, output of Hello, World! We will use a bios routine to clear the screen, and output a few chars afterwards. The BIOS gives us Interrupt 0x10, which is for printing text. It takes a few options:
+
+INT 0x10 is a BIOS video interrupt for all video related calls
+AL = ASCII value of character to display
+AH = 0x0E ;Teletype mode, the BIOS will print one character on screen
+BL = Text Attribute	; the color
+BH = Page Number (0x00 for most of the cases)
+
+You can see the AL, AH, etc. These are parts of registers, which the CPU used to read and write information. AL will address the Low byte of the 16 Bit Register AX, AH the High byte. Let's go:
+
+hello_world.asm
+
+use16						; we like to use 16 Bits Real Mode
+ORG 0x7C00					; the boot block is read into memory at $7c00
+
+MOV AL, 'A'
+CALL PrintCharacter
+JMP $ 		;Infinite loop, hang it here.
+
+
+PrintCharacter:	;Procedure to print character on screen
+	;Assume that ASCII value is in register AL
+MOV AH, 0x0E	;Tell BIOS that we need to print one charater on screen.
+MOV BH, 0x00	;Page no.
+MOV BL, 0x07	;Text attribute 0x07 is lightgrey font on black background
+
+INT 0x10	;Call video interrupt
+RET		;Return to calling procedure
+
+jmp $						; Stall. $ is the current memory address, so it stays here.
+
+times 510-($-$$) db 0		; the boot block has to be exactly 512 bytes. the $-$$
+							; calculates the size of the code itself.
+
+dw 0xaa55					; this is the boot sector signature. Keep in mind, that
+							; Intel-CPUs are little ending first, so the $aa is first
+							
+This code will clear the screen, and print an A. If you want to output a whole string, you could add several characters. Or, you crate a loop, like this:
+
+use16						; we like to use 16 Bits Real Mode
+org 0x7C00					; the boot block is read into memory at $7c00
+
+call clearscreen			; call the routine to clear the screen
+
+mov SI, HelloWorldString	; Store string pointer to SI (Source)
+call printString			; Call print string procedure
+
+jmp $						; Stall. $ is the current memory address, so it stays here.
+
+clearscreen:				; subroutine, will clear the screen
+mov AH, 00					; 00 in ah
+mov AL, 03					; 03 in al
+int 0x10					; and int 0x10 will clear the screen
+ret
+
+printChar:					; subroutine to print character on screen
+							; Assume an ASCII value in register AL
+mov AH, 0x0E				; BIOS should print one char on screen
+mov BH, 0x00				; Page no, should be zero
+mov BL, 0x07				; Text attribute 0x07 is lightgrey font on black background
+int 0x10					; Call video interrupt
+ret							; Return to calling procedure
+
+printString:				; subroutine to print a whole string
+printNextChar:				; Label to fetch next character from string
+mov AL, [SI]				; Get a byte from string and store in AL register
+inc SI						; Increment SI pointer
+or AL, AL					; Check if value in AL is zero (end of string)
+jz printStringEnd 			; If end then return
+call printChar 				; Else print the character which is in AL register
+jmp printNextChar			; Fetch next character from string
+printStringEnd:				; End label
+ret							; Return to calling procedure
+
+							; Data section
+HelloWorldString db 'Hello, World!', 0	; HelloWorld string ending with 0
+							
+times 510-($-$$) db 0		; the boot block has to be exactly 512 bytes. the $-$$
+							; calculates the size of the code itself.
+
+dw 0xaa55					; this is the boot sector signature. Keep in mind, that
+							; Intel-CPUs are little ending first, so the $aa is first
+
+
+					
+
+[]
+Floppy Drives: http://philipstorr.id.au/pcbook/book4/floppyd.htm
+Floppy Disk Formats: https://www.wikiwand.com/en/List_of_floppy_disk_formats
+
+
+

@@ -1,0 +1,34 @@
+; Gameport-Routines for Ozon.OS
+
+detectGameport:
+	mov  al,01h                  ; value to write to
+	mov  dx,0201h                ; port number 0201h
+	out  dx,al                   ; 
+
+	mov si,gamePortDetect        ; offset address
+    mov word [textPosX], 8
+    mov word [textPosY], 86
+    mov byte [textColor], white
+	call drawTextXY
+	
+    mov  cx,0F00h                ; number of loops
+port_loop:
+	in   al,dx                   ; read from port
+	and  al,0Fh                  ; if joystick present, then AL should
+	cmp  al,0Fh                  ; be 0Fh after ANDing with 0Fh.
+	je   short done
+	loop port_loop
+           
+	mov byte [gameportInstalled],0
+    mov word [textPosY], 86
+	call printOptionFound		; positions: textPosX und textPosY, Length = cl
+ret
+done:
+	mov byte [gameportInstalled],1
+    mov word [textPosY], 86
+	call printOptionNotFound		; positions: textPosX und textPosY, Length = cl
+
+ret
+
+align 2
+gameportInstalled: db 0
