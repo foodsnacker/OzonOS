@@ -1,3 +1,8 @@
+; Copyright (c) 2022, Jörg Burbach, Ducks on the Water
+; All rights reserved.
+
+; This source code is licensed under the BSD-style license found in the LICENSE file in the root directory of this source tree. 
+
 mandelbrot:
 mov dx,-128 ;start on the first line
 yloop:

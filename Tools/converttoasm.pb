@@ -1,4 +1,11 @@
-﻿file.s = OpenFileRequester("Datei","","*.*",0)
+﻿; Copyright (c) 2022, Jörg Burbach, Ducks on the Water
+; All rights reserved.
+
+; This source code is licensed under the BSD-style license found in the LICENSE file in the root directory of this source tree. 
+
+; convert a file to an .asm-usable format
+
+file.s = OpenFileRequester("File","","*.*",0)
 
 If ReadFile(0,file)
 CreateFile(1,file + ".asm")
@@ -20,7 +27,7 @@ CreateFile(1,file + ".asm")
   CloseFile(0)
   CloseFile(1);
 EndIf
-; IDE Options = PureBasic 5.46 LTS (MacOS X - x64)
-; CursorPosition = 14
-; EnableUnicode
+; IDE Options = PureBasic 6.00 LTS (MacOS X - x64)
+; CursorPosition = 7
 ; EnableXP
+; EnableUnicode

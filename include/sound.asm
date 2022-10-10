@@ -1,3 +1,9 @@
+; Copyright (c) 2022, Jörg Burbach, Ducks on the Water
+; All rights reserved.
+
+; This source code is licensed under the BSD-style license found in the LICENSE file in the root directory of this source tree. 
+
+
 ; Sound-Routines for Ozon.OS
 PgPort     equ 83h
 AddPort    equ 02h
@@ -75,13 +81,6 @@ WaitIt:    in   al,dx
            pop  ax
            out  dx,al
 ret
-
-; ==================================================================
-; MikeOS -- The Mike Operating System kernel
-; Copyright (C) 2006 - 2019 MikeOS Developers -- see doc/LICENSE.TXT
-;
-; PC SPEAKER SOUND ROUTINES
-; ==================================================================
 
 ; ------------------------------------------------------------------
 ; os_speaker_tone -- Generate PC speaker tone (call os_speaker_off to turn off)

@@ -1,3 +1,8 @@
+; Copyright (c) 2022, Jörg Burbach, Ducks on the Water
+; All rights reserved.
+
+; This source code is licensed under the BSD-style license found in the LICENSE file in the root directory of this source tree. 
+
 ; Graphic-Routines for Ozon.OS
 white     equ 0x0f
 lightgrey equ 0x07

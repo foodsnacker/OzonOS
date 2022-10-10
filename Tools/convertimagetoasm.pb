@@ -1,10 +1,14 @@
-﻿file.s = OpenFileRequester("Datei","","*.*",0)
+﻿; Copyright (c) 2022, Jörg Burbach, Ducks on the Water
+; All rights reserved.
+
+; This source code is licensed under the BSD-style license found in the LICENSE file in the root directory of this source tree. 
+
+; convert a PNG to an .asm-usable file
+
+file.s = OpenFileRequester("File","","*.*",0)
 
 UsePNGImageDecoder()
-UsePNGImageEncoder()
 LoadImage(0,file)
-;SaveImage(0,"test.png",#PB_ImagePlugin_PNG,#PB_Image_FloydSteinberg,8)
-;End
 
 StartDrawing(ImageOutput(0))
 
@@ -21,7 +25,7 @@ CreateFile(1,file + ".asm")
   Next
   CloseFile(1)
  StopDrawing()
-; IDE Options = PureBasic 5.62 (MacOS X - x64)
-; CursorPosition = 10
+; IDE Options = PureBasic 6.00 LTS (MacOS X - x64)
+; CursorPosition = 5
 ; EnableXP
 ; EnableUnicode
