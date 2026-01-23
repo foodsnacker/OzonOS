@@ -4,6 +4,7 @@
 ; This source code is licensed under the BSD-style license found in the LICENSE file in the root directory of this source tree. 
 
 readyMSD: 			db 'Ozon.OS is ready to use.', 0
+errorMSD:			db 'SYSTEM ERROR: Initialization failed!', 0
 optionFound:		db 'Found.', 0
 optionNotFound: 	db 'Not Found.', 0
 mouseDetect:		db 'PS/2 Mouse...', 0

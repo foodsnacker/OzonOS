@@ -179,14 +179,11 @@ plotImageXY:
 	.for_x:
 		push AX           ;save y-length
 		.for_y:
-			;pusha
 			mov CL, byte [CS:SI]
 			cmp CL, 0
-			je .notDraw	
-;			cmp 			; !! hier nach x > 320 und y > 200 suchen
+			je .notDraw
 			mov byte [ES:DI], CL
 			.notDraw:
-			;popa
 		inc DI			  ; next target position
 		inc SI			  ; next source position
 		sub AX, 1         ; decrease di by one and set flags

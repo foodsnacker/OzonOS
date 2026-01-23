@@ -167,23 +167,23 @@ mouseCallback:
     mov cx, [mouseX]
     add ax, cx                  ; AX = new mouse X_coord
 
-	; check if MouseX > 320 => 320
-	cmp ax, 319
-	JLE MouseXOK320
-	mov ax, 319
-MouseXOK320:
-	; check if MouseX <   0 =>   0
+	; check if MouseX > 311 (320 - 8 pixels cursor width)
+	cmp ax, 311
+	JLE MouseXOK311
+	mov ax, 311
+MouseXOK311:
+	; check if MouseX < 0 => 0
 	cmp ax, 0
 	JGE MouseXOK0
 	mov ax, 0
 MouseXOK0:
 
-	; check if MouseX > 320 => 320
-	cmp DX, 199
-	JLE MouseYOK200
-	mov DX, 199
-MouseYOK200:
-	; check if MouseY <   0 =>   0
+	; check if MouseY > 187 (199 - 12 pixels cursor height)
+	cmp DX, 187
+	JLE MouseYOK187
+	mov DX, 187
+MouseYOK187:
+	; check if MouseY < 0 => 0
 	cmp DX, 0
 	JGE MouseYOK0
 	mov DX, 0
@@ -208,7 +208,27 @@ mouseCallbackDummy:
 retf                     	   ; This routine was reached via FAR CALL. Need a FAR RET
 
 plotMouseBack:
-	
+	push ax
+	push bx
+	push cx
+	push dx
+	push si
+	push di
+
+	; Clear the previous mouse cursor position by drawing a black box
+	mov cx, [lastMouseX]	; X position
+	mov dx, [lastMouseY]	; Y position
+	mov si, 8				; Width (8 pixels)
+	mov di, 12				; Height (12 pixels)
+	mov al, 0				; Color: black (0)
+	call plotBoxXY
+
+	pop di
+	pop si
+	pop dx
+	pop cx
+	pop bx
+	pop ax
 ret
 
 plotMouse:
@@ -239,9 +259,7 @@ mouseY:			dw 100            ; Current mouse Y coordinate
 curStatus:  	db 0              ; Current mouse status
 lastMouseX		dw 0
 lastMouseY		dw 0
-lastMouseCol	db 0
 
-mouseBack:		times 100 db 0
 mouseArrow:		db 0x0f,0x08,0x00,0x00,0x00,0x00,0x00,0x00
 				db 0x0f,0x0f,0x08,0x00,0x00,0x00,0x00,0x00
 				db 0x0f,0x01,0x0f,0x08,0x00,0x00,0x00,0x00
