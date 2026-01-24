@@ -6,6 +6,9 @@
 HW_EQUIP_PS2     equ 4          ; PS2 mouse installed?
 MOUSE_PKT_BYTES  equ 3          ; Number of bytes in mouse packet
 MOUSE_RESOLUTION equ 3          ; Mouse resolution 8 counts/mm
+MCGA_BUFFER_OFFSET equ 64000   ; Unused MCGA memory starts at byte 64000 (320x200=64000)
+MOUSE_WIDTH      equ 8          ; Mouse cursor width in pixels
+MOUSE_HEIGHT     equ 12         ; Mouse cursor height in pixels
 
 
 ; Function: mouseInitialize
@@ -167,23 +170,23 @@ mouseCallback:
     mov cx, [mouseX]
     add ax, cx                  ; AX = new mouse X_coord
 
-	; check if MouseX > 320 => 320
-	cmp ax, 319
-	JLE MouseXOK320
-	mov ax, 319
-MouseXOK320:
-	; check if MouseX <   0 =>   0
+	; check if MouseX > 311 (320 - 8 pixels cursor width)
+	cmp ax, 311
+	JLE MouseXOK311
+	mov ax, 311
+MouseXOK311:
+	; check if MouseX < 0 => 0
 	cmp ax, 0
 	JGE MouseXOK0
 	mov ax, 0
 MouseXOK0:
 
-	; check if MouseX > 320 => 320
-	cmp DX, 199
-	JLE MouseYOK200
-	mov DX, 199
-MouseYOK200:
-	; check if MouseY <   0 =>   0
+	; check if MouseY > 187 (199 - 12 pixels cursor height)
+	cmp DX, 187
+	JLE MouseYOK187
+	mov DX, 187
+MouseYOK187:
+	; check if MouseY < 0 => 0
 	cmp DX, 0
 	JGE MouseYOK0
 	mov DX, 0
@@ -194,8 +197,9 @@ MouseYOK0:
     mov [mouseX], ax            ; Update current virtual mouseX coord
     mov [mouseY], dx            ; Update current virtual mouseY coord
 
-	call plotMouseBack					
-	call plotMouse 
+	call plotMouseBack			; Restore old background
+	call saveMouseBackground	; Save new background before drawing cursor
+	call plotMouse				; Draw cursor at new position 
 
     pop dx                      ; Restore all modified registers
     pop cx
@@ -207,8 +211,104 @@ MouseYOK0:
 mouseCallbackDummy:
 retf                     	   ; This routine was reached via FAR CALL. Need a FAR RET
 
+; Function: saveMouseBackground
+;           Save the screen background at current mouse position to MCGA buffer
+; Inputs:   mouseX, mouseY = current mouse position
+; Returns:  None
+; Clobbers: None (all registers preserved)
+saveMouseBackground:
+	push ES
+	push DS
+	push SI
+	push DI
+	push AX
+	push BX
+	push CX
+	push DX
+
+	; Setup segments: DS = ES = 0xA000 (MCGA video memory)
+	mov AX, 0xA000
+	mov DS, AX
+	mov ES, AX
+
+	; DI = destination in buffer (MCGA_BUFFER_OFFSET)
+	mov DI, MCGA_BUFFER_OFFSET
+
+	; Calculate source position: SI = mouseY * 320 + mouseX
+	mov AX, [CS:mouseY]
+	mov DX, 320
+	mul DX					; AX = mouseY * 320
+	add AX, [CS:mouseX]
+	mov SI, AX				; SI = source offset in video memory
+
+	; Copy 8x12 pixels
+	mov BX, MOUSE_HEIGHT	; Outer loop: 12 rows
+.save_row:
+	mov CX, MOUSE_WIDTH		; Inner loop: 8 pixels per row
+	rep movsb				; Copy 8 bytes from DS:SI to ES:DI
+
+	add SI, 320 - MOUSE_WIDTH  ; Move to next row (320 - 8)
+	dec BX
+	jnz .save_row
+
+	pop DX
+	pop CX
+	pop BX
+	pop AX
+	pop DI
+	pop SI
+	pop DS
+	pop ES
+ret
+
+; Function: plotMouseBack
+;           Restore the saved background from MCGA buffer to previous mouse position
+; Inputs:   lastMouseX, lastMouseY = previous mouse position
+; Returns:  None
+; Clobbers: None (all registers preserved)
 plotMouseBack:
-	
+	push ES
+	push DS
+	push SI
+	push DI
+	push AX
+	push BX
+	push CX
+	push DX
+
+	; Setup segments
+	mov AX, 0xA000
+	mov DS, AX				; DS = source (MCGA buffer)
+	mov ES, AX				; ES = destination (video memory)
+
+	; SI = source in buffer
+	mov SI, MCGA_BUFFER_OFFSET
+
+	; Calculate destination position: DI = lastMouseY * 320 + lastMouseX
+	mov AX, [CS:lastMouseY]
+	mov DX, 320
+	mul DX					; AX = lastMouseY * 320
+	add AX, [CS:lastMouseX]
+	mov DI, AX				; DI = destination offset
+
+	; Copy 8x12 pixels back
+	mov BX, MOUSE_HEIGHT	; Outer loop: 12 rows
+.restore_row:
+	mov CX, MOUSE_WIDTH		; Inner loop: 8 pixels per row
+	rep movsb				; Copy 8 bytes from DS:SI to ES:DI
+
+	add DI, 320 - MOUSE_WIDTH  ; Move to next row
+	dec BX
+	jnz .restore_row
+
+	pop DX
+	pop CX
+	pop BX
+	pop AX
+	pop DI
+	pop SI
+	pop DS
+	pop ES
 ret
 
 plotMouse:
@@ -237,11 +337,9 @@ align 2
 mouseX:			dw 160            ; Current mouse X coordinate
 mouseY:			dw 100            ; Current mouse Y coordinate
 curStatus:  	db 0              ; Current mouse status
-lastMouseX		dw 0
-lastMouseY		dw 0
-lastMouseCol	db 0
+lastMouseX:		dw 160            ; Previous mouse X coordinate (initialized to same as mouseX)
+lastMouseY:		dw 100            ; Previous mouse Y coordinate (initialized to same as mouseY)
 
-mouseBack:		times 100 db 0
 mouseArrow:		db 0x0f,0x08,0x00,0x00,0x00,0x00,0x00,0x00
 				db 0x0f,0x0f,0x08,0x00,0x00,0x00,0x00,0x00
 				db 0x0f,0x01,0x0f,0x08,0x00,0x00,0x00,0x00

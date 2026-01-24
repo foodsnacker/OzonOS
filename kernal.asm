@@ -15,7 +15,7 @@ org 0x0500						; Memory layout is free from 0x0500
 	cld
 	jmp 0x0000:kernalStart		; ensure cs == 0x0000
 
-times 100 db 0 					; cleared space for stack
+times 512 db 0 					; cleared space for stack (512 bytes)
 
 kernalStart:       
 ; Initialize Peripherals
@@ -30,7 +30,13 @@ kernalStart:
 
 	call detectGameport			; detect Game Port
 	jc .err_loop
-	
+
+	; Load GUI icons into MCGA buffer
+	call loadGuiIcons
+
+	; Test: Draw icons to screen
+	call testDrawIcons
+
 	mov SI,readyMSD             ; offset address
 	mov word [textPosX], 8	    ; x horizontal coordinate
     mov word [textPosY], 182
@@ -38,13 +44,19 @@ kernalStart:
 	call drawTextXY
 
 ; finished initializing
-	
-	; !!! hier noch auf Maus und Tastendruck warten
-;	call switchMode13h
 
+	; Enter main loop - mouse and keyboard are handled via interrupts
 	call .main_loop
 
 .err_loop:
+	; Display error message
+	mov SI, errorMSD            ; offset address
+	mov word [textPosX], 8	    ; x horizontal coordinate
+    mov word [textPosY], 182
+    mov byte [textColor], white
+	call drawTextXY
+
+	; Halt system
     hlt
     jmp .err_loop
     
@@ -58,6 +70,7 @@ kernalStart:
 
 %include "include/strings.asm"
 %include "include/gfx.asm"
+%include "include/gui_icons.asm"
 %include "include/ps2mouse.asm"
 %include "include/keyboard.asm"
 %include "include/sound.asm"
