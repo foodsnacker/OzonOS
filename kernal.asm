@@ -30,7 +30,13 @@ kernalStart:
 
 	call detectGameport			; detect Game Port
 	jc .err_loop
-	
+
+	; Load GUI icons into MCGA buffer
+	call loadGuiIcons
+
+	; Test: Draw icons to screen
+	call testDrawIcons
+
 	mov SI,readyMSD             ; offset address
 	mov word [textPosX], 8	    ; x horizontal coordinate
     mov word [textPosY], 182
@@ -64,6 +70,7 @@ kernalStart:
 
 %include "include/strings.asm"
 %include "include/gfx.asm"
+%include "include/gui_icons.asm"
 %include "include/ps2mouse.asm"
 %include "include/keyboard.asm"
 %include "include/sound.asm"
