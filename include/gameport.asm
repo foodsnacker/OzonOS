@@ -26,12 +26,12 @@ port_loop:
            
 	mov byte [gameportInstalled],0
     mov word [textPosY], 86
-	call printOptionFound		; positions: textPosX und textPosY, Length = cl
+	call printOptionNotFound	; not found: loop exhausted without joystick response
 ret
 done:
 	mov byte [gameportInstalled],1
     mov word [textPosY], 86
-	call printOptionNotFound		; positions: textPosX und textPosY, Length = cl
+	call printOptionFound		; found: joystick responded with 0Fh
 
 ret
 

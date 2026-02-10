@@ -61,7 +61,7 @@ mouseInitialize:
     stc                         ; CF=1 is error
  
     mov word [textPosY], 56
-	call optionNotFound
+	call printOptionNotFound
 
 .finished:
     pop bx
