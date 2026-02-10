@@ -21,18 +21,6 @@ ICON_DEPTH_PRESSED  equ ICON_BASE + 112    ; 64212
 ICON_SIZE_NORMAL    equ ICON_BASE + 148    ; 64248
 ICON_SIZE_PRESSED   equ ICON_BASE + 184    ; 64284
 
-; Mouse Cursors - Standard (8×12 pixels, 2-bit = 24 bytes each)
-ICON_MOUSE_ARROW    equ ICON_BASE + 220    ; 64316
-ICON_MOUSE_BUSY     equ ICON_BASE + 244    ; 64340
-ICON_MOUSE_HAND     equ ICON_BASE + 268    ; 64364
-ICON_MOUSE_IBEAM    equ ICON_BASE + 292    ; 64388
-
-; Mouse Cursors - Resize (8×12 pixels, 2-bit = 24 bytes each)
-ICON_MOUSE_RESIZE_H equ ICON_BASE + 316    ; 64412 (horizontal ↔)
-ICON_MOUSE_RESIZE_V equ ICON_BASE + 340    ; 64436 (vertical ↕)
-ICON_MOUSE_RESIZE_D1 equ ICON_BASE + 364   ; 64460 (diagonal ↖↘)
-ICON_MOUSE_RESIZE_D2 equ ICON_BASE + 388   ; 64484 (diagonal ↗↙)
-
 ; Scroll Arrows (10×10 pixels, 2-bit = 25 bytes each)
 ICON_SCROLL_UP      equ ICON_BASE + 412    ; 64508
 ICON_SCROLL_DOWN    equ ICON_BASE + 437    ; 64533
@@ -323,65 +311,6 @@ sizePressed:
     db 0x00, 0xAA, 0xAA         ; Row 10: ....▓▓▓▓▓▓▓▓
     db 0xA0, 0xAA, 0xAA         ; Row 11: ..▓▓▓▓▓▓▓▓▓▓
 
-; Mouse Arrow (8×12, standard pointer) - 2-bit version
-mouseArrow:
-    db 0xF0, 0x00               ; Row  0: ██......
-    db 0xFA, 0x00               ; Row  1: ██▓▓....
-    db 0xFA, 0xA0               ; Row  2: ██▓▓▓▓..
-    db 0xFA, 0xAA               ; Row  3: ██▓▓▓▓▓▓
-    db 0xFA, 0xAA               ; Row  4: ██▓▓▓▓▓▓
-    db 0xFA, 0xAA               ; Row  5: ██▓▓▓▓▓▓
-    db 0xFA, 0xAA               ; Row  6: ██▓▓▓▓▓▓
-    db 0xFF, 0xAA               ; Row  7: ████▓▓▓▓
-    db 0xF0, 0xFA               ; Row  8: ██..██▓▓
-    db 0x00, 0x5A               ; Row  9: ....░░▓▓
-    db 0x00, 0x0F               ; Row 10: ......██
-    db 0x00, 0x0F               ; Row 11: ......██
-
-; Mouse Busy/Hourglass (8×12)
-mouseBusy:
-    db 0xFF, 0xFF               ; Row  0: ████████
-    db 0xFF, 0xFF               ; Row  1: ████████
-    db 0x0F, 0xF0               ; Row  2: ..████..
-    db 0x00, 0xF0               ; Row  3: ....██..
-    db 0x00, 0xA0               ; Row  4: ....▓▓..
-    db 0x00, 0xA0               ; Row  5: ....▓▓..
-    db 0x00, 0xA0               ; Row  6: ....▓▓..
-    db 0x00, 0xF0               ; Row  7: ....██..
-    db 0x0F, 0xF0               ; Row  8: ..████..
-    db 0xAF, 0xFA               ; Row  9: ▓▓████▓▓
-    db 0xFF, 0xFF               ; Row 10: ████████
-    db 0xFF, 0xFF               ; Row 11: ████████
-
-; Mouse Hand (8×12, pointing finger)
-mouseHand:
-    db 0x00, 0x00               ; Row  0: ........
-    db 0x00, 0xF0               ; Row  1: ....██..
-    db 0x00, 0xFA               ; Row  2: ....██▓▓
-    db 0x00, 0xFA               ; Row  3: ....██▓▓
-    db 0x00, 0xFA               ; Row  4: ....██▓▓
-    db 0xF0, 0xFA               ; Row  5: ██..██▓▓
-    db 0xFA, 0xFA               ; Row  6: ██▓▓██▓▓
-    db 0xFA, 0xFA               ; Row  7: ██▓▓██▓▓
-    db 0xFA, 0xFA               ; Row  8: ██▓▓██▓▓
-    db 0x0F, 0xFA               ; Row  9: ..████▓▓
-    db 0x00, 0xFF               ; Row 10: ....████
-    db 0x00, 0x00               ; Row 11: ........
-
-; Mouse I-Beam (8×12, text cursor)
-mouseIBeam:
-    db 0x0F, 0xF0               ; Row  0: ..████..
-    db 0x00, 0xF0               ; Row  1: ....██..
-    db 0x00, 0xF0               ; Row  2: ....██..
-    db 0x00, 0xF0               ; Row  3: ....██..
-    db 0x00, 0xF0               ; Row  4: ....██..
-    db 0x00, 0xF0               ; Row  5: ....██..
-    db 0x00, 0xF0               ; Row  6: ....██..
-    db 0x00, 0xF0               ; Row  7: ....██..
-    db 0x00, 0xF0               ; Row  8: ....██..
-    db 0x00, 0xF0               ; Row  9: ....██..
-    db 0x00, 0xF0               ; Row 10: ....██..
-    db 0x0F, 0xF0               ; Row 11: ..████..
 
 ; Scroll Up Arrow (10×10)
 scrollUp:
@@ -538,66 +467,6 @@ radioOn:
     db 0xF0, 0xFF, 0x0F         ; Row 5: ██..████..██
     db 0x0F, 0x00, 0xF0         ; Row 6: ..██..██
     db 0x00, 0xFF, 0x00         ; Row 7: ....████
-
-; Mouse Resize Horizontal (8×12, ↔)
-mouseResizeH:
-    db 0x00, 0x00               ; Row  0: ........
-    db 0x00, 0x00               ; Row  1: ........
-    db 0x00, 0xF0               ; Row  2: ....██..
-    db 0xF0, 0xF0               ; Row  3: ██..██..
-    db 0xFF, 0xFF               ; Row  4: ████████
-    db 0xFF, 0xFF               ; Row  5: ████████
-    db 0xFF, 0xFF               ; Row  6: ████████
-    db 0xFF, 0xFF               ; Row  7: ████████
-    db 0xF0, 0xF0               ; Row  8: ██..██..
-    db 0x00, 0xF0               ; Row  9: ....██..
-    db 0x00, 0x00               ; Row 10: ........
-    db 0x00, 0x00               ; Row 11: ........
-
-; Mouse Resize Vertical (8×12, ↕)
-mouseResizeV:
-    db 0x00, 0xF0               ; Row  0: ....██..
-    db 0x0F, 0xF0               ; Row  1: ..████..
-    db 0xFF, 0xFF               ; Row  2: ████████
-    db 0x00, 0xF0               ; Row  3: ....██..
-    db 0x00, 0xF0               ; Row  4: ....██..
-    db 0x00, 0xF0               ; Row  5: ....██..
-    db 0x00, 0xF0               ; Row  6: ....██..
-    db 0x00, 0xF0               ; Row  7: ....██..
-    db 0x00, 0xF0               ; Row  8: ....██..
-    db 0xFF, 0xFF               ; Row  9: ████████
-    db 0x0F, 0xF0               ; Row 10: ..████..
-    db 0x00, 0xF0               ; Row 11: ....██..
-
-; Mouse Resize Diagonal 1 (8×12, ↖↘)
-mouseResizeD1:
-    db 0xFF, 0xF0               ; Row  0: ██████..
-    db 0xFF, 0x00               ; Row  1: ████....
-    db 0xFA, 0xF0               ; Row  2: ██▓▓██..
-    db 0xF0, 0xFF               ; Row  3: ██..████
-    db 0x00, 0xAF               ; Row  4: ....▓▓██
-    db 0x00, 0x00               ; Row  5: ........
-    db 0x00, 0x00               ; Row  6: ........
-    db 0xFA, 0x00               ; Row  7: ██▓▓....
-    db 0xFF, 0x0F               ; Row  8: ████..██
-    db 0x0F, 0xAF               ; Row  9: ..██▓▓██
-    db 0x00, 0xFF               ; Row 10: ....████
-    db 0x0F, 0xFF               ; Row 11: ..██████
-
-; Mouse Resize Diagonal 2 (8×12, ↗↙)
-mouseResizeD2:
-    db 0x0F, 0xFF               ; Row  0: ..██████
-    db 0x00, 0xFF               ; Row  1: ....████
-    db 0x0F, 0xAF               ; Row  2: ..██▓▓██
-    db 0xFF, 0x0F               ; Row  3: ████..██
-    db 0xFA, 0x00               ; Row  4: ██▓▓....
-    db 0x00, 0x00               ; Row  5: ........
-    db 0x00, 0x00               ; Row  6: ........
-    db 0x00, 0xAF               ; Row  7: ....▓▓██
-    db 0xF0, 0xFF               ; Row  8: ██..████
-    db 0xFA, 0xF0               ; Row  9: ██▓▓██..
-    db 0xFF, 0x00               ; Row 10: ████....
-    db 0xFF, 0xF0               ; Row 11: ██████..
 
 ; System Icon - Warning (16×16, exclamation mark in triangle)
 sysWarning:
@@ -862,38 +731,6 @@ testDrawIcons:
     mov AX, 12
     call draw2BitIcon
 
-    ; Draw mouse arrow at (100, 10)
-    mov CX, 100
-    mov DX, 10
-    mov SI, ICON_MOUSE_ARROW
-    mov BX, 8
-    mov AX, 12
-    call draw2BitIcon
-
-    ; Draw mouse busy at (115, 10)
-    mov CX, 115
-    mov DX, 10
-    mov SI, ICON_MOUSE_BUSY
-    mov BX, 8
-    mov AX, 12
-    call draw2BitIcon
-
-    ; Draw mouse hand at (130, 10)
-    mov CX, 130
-    mov DX, 10
-    mov SI, ICON_MOUSE_HAND
-    mov BX, 8
-    mov AX, 12
-    call draw2BitIcon
-
-    ; Draw mouse I-beam at (145, 10)
-    mov CX, 145
-    mov DX, 10
-    mov SI, ICON_MOUSE_IBEAM
-    mov BX, 8
-    mov AX, 12
-    call draw2BitIcon
-
     ; Draw scroll arrows at (10, 30)
     mov CX, 10
     mov DX, 30
@@ -978,35 +815,6 @@ testDrawIcons:
     mov CX, 55
     mov DX, 65
     mov SI, ICON_BUSY_ANIM3
-    mov BX, 8
-    mov AX, 12
-    call draw2BitIcon
-
-    ; Draw resize cursors at (170, 10)
-    mov CX, 170
-    mov DX, 10
-    mov SI, ICON_MOUSE_RESIZE_H
-    mov BX, 8
-    mov AX, 12
-    call draw2BitIcon
-
-    mov CX, 185
-    mov DX, 10
-    mov SI, ICON_MOUSE_RESIZE_V
-    mov BX, 8
-    mov AX, 12
-    call draw2BitIcon
-
-    mov CX, 200
-    mov DX, 10
-    mov SI, ICON_MOUSE_RESIZE_D1
-    mov BX, 8
-    mov AX, 12
-    call draw2BitIcon
-
-    mov CX, 215
-    mov DX, 10
-    mov SI, ICON_MOUSE_RESIZE_D2
     mov BX, 8
     mov AX, 12
     call draw2BitIcon
