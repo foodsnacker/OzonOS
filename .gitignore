@@ -1,2 +1,5 @@
 
 .DS_Store
+*.bin
+*.img
+tools/icons_8bit.asm

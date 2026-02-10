@@ -226,7 +226,7 @@ get:
         dec ch                         
         jnz get                         
         add bx,8
-        loop find               ; find next character
+        jmp find                ; find next character (null-terminated)
                    
 draw:
         pusha                   ; save registers
