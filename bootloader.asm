@@ -78,7 +78,7 @@ bootStart:
 	call drawTextXY
 
 ; load the Kernal from Disk
-    mov AL, 0x40           	; load 64 sectors (32KB kernel)
+    mov AL, 0x20           	; load 32 sectors (16KB kernel)
     mov BX, 0x0500      	; destination (directly after IRQ table)
     mov CX, 0x0002         	; cylinder 0, sector 2
     xor dh, dh

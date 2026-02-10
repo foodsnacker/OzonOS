@@ -47,12 +47,6 @@ kernalStart:
     mov byte [textColor], white
 	call drawTextXY
 
-	; Brief pause to show init screen
-	mov cx, 0x0008
-	mov dx, 0x0000
-	mov ah, 0x86
-	int 0x15
-
 	; Play startup beep
 	call os_speaker_beep
 
@@ -169,4 +163,4 @@ testwavend:
 
 %include "include/english.asm"
 
-times 32768-($-$$) db 0
+times 16384-($-$$) db 0
