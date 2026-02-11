@@ -38,17 +38,18 @@ winDragOffsY:   dw 0
 ;------------------------------------------------------
 wmInit:
     pusha
-    mov CX, 0
-    mov DX, 0
-    mov SI, 320
-    mov DI, 200
+    ; plotBoxXY: CX=Y, DX=X, SI=height, DI=width
+    mov CX, 0              ; Y=0
+    mov DX, 0              ; X=0
+    mov SI, 200            ; height=200
+    mov DI, 320            ; width=320
     mov AL, DESKTOP_BG
     call plotBoxXY
 
-    mov CX, 0
-    mov DX, 0
-    mov SI, 320
-    mov DI, 10
+    mov CX, 0              ; Y=0
+    mov DX, 0              ; X=0
+    mov SI, 10             ; height=10
+    mov DI, 320            ; width=320
     mov AL, SCREEN_TITLE_BG
     call plotBoxXY
 
@@ -361,17 +362,18 @@ wmWindowToBack:
 wmRedrawAll:
     pusha
 
-    mov CX, 0
-    mov DX, 10
-    mov SI, 320
-    mov DI, 190
+    ; plotBoxXY: CX=Y, DX=X, SI=height, DI=width
+    mov CX, 10             ; Y=10 (below title bar)
+    mov DX, 0              ; X=0
+    mov SI, 190            ; height=190
+    mov DI, 320            ; width=320
     mov AL, DESKTOP_BG
     call plotBoxXY
 
-    mov CX, 0
-    mov DX, 0
-    mov SI, 320
-    mov DI, 10
+    mov CX, 0              ; Y=0
+    mov DX, 0              ; X=0
+    mov SI, 10             ; height=10
+    mov DI, 320            ; width=320
     mov AL, SCREEN_TITLE_BG
     call plotBoxXY
 
@@ -423,23 +425,25 @@ wmDrawWindow:
     mov [wmTmpH], ax
 
     ; Content area background
-    mov CX, [wmTmpX]
-    mov DX, [wmTmpY]
-    add DX, TITLEBAR_H
-    mov SI, [wmTmpW]
-    mov DI, [wmTmpH]
-    sub DI, TITLEBAR_H
-    cmp DI, 1
+    ; plotBoxXY: CX=Y, DX=X, SI=height, DI=width
+    mov CX, [wmTmpY]
+    add CX, TITLEBAR_H
+    mov DX, [wmTmpX]
+    mov SI, [wmTmpH]
+    sub SI, TITLEBAR_H
+    cmp SI, 1
     jl .skipContent
+    mov DI, [wmTmpW]
     mov AL, WIN_CONTENT_BG
     call plotBoxXY
 .skipContent:
 
     ; Title bar
-    mov CX, [wmTmpX]
-    mov DX, [wmTmpY]
-    mov SI, [wmTmpW]
-    mov DI, TITLEBAR_H
+    ; plotBoxXY: CX=Y, DX=X, SI=height, DI=width
+    mov CX, [wmTmpY]
+    mov DX, [wmTmpX]
+    mov SI, TITLEBAR_H
+    mov DI, [wmTmpW]
     mov bx, [wmTmpIdx]
     test byte [winTable + bx + 8], WIN_FOCUS
     jz .inactT
@@ -450,36 +454,40 @@ wmDrawWindow:
 .drawT:
     call plotBoxXY
 
-    ; Borders
-    mov CX, [wmTmpX]
-    mov DX, [wmTmpY]
-    mov SI, [wmTmpW]
-    mov DI, 1
-    mov AL, WIN_BORDER_COL
-    call plotBoxXY
-
-    mov CX, [wmTmpX]
-    mov DX, [wmTmpY]
-    add DX, [wmTmpH]
-    dec DX
-    mov SI, [wmTmpW]
-    mov DI, 1
-    mov AL, WIN_BORDER_COL
-    call plotBoxXY
-
-    mov CX, [wmTmpX]
-    mov DX, [wmTmpY]
+    ; Borders - plotBoxXY: CX=Y, DX=X, SI=height, DI=width
+    ; Top border (horizontal line)
+    mov CX, [wmTmpY]
+    mov DX, [wmTmpX]
     mov SI, 1
-    mov DI, [wmTmpH]
+    mov DI, [wmTmpW]
     mov AL, WIN_BORDER_COL
     call plotBoxXY
 
-    mov CX, [wmTmpX]
-    add CX, [wmTmpW]
+    ; Bottom border (horizontal line)
+    mov CX, [wmTmpY]
+    add CX, [wmTmpH]
     dec CX
-    mov DX, [wmTmpY]
+    mov DX, [wmTmpX]
     mov SI, 1
-    mov DI, [wmTmpH]
+    mov DI, [wmTmpW]
+    mov AL, WIN_BORDER_COL
+    call plotBoxXY
+
+    ; Left border (vertical line)
+    mov CX, [wmTmpY]
+    mov DX, [wmTmpX]
+    mov SI, [wmTmpH]
+    mov DI, 1
+    mov AL, WIN_BORDER_COL
+    call plotBoxXY
+
+    ; Right border (vertical line)
+    mov CX, [wmTmpY]
+    mov DX, [wmTmpX]
+    add DX, [wmTmpW]
+    dec DX
+    mov SI, [wmTmpH]
+    mov DI, 1
     mov AL, WIN_BORDER_COL
     call plotBoxXY
 
@@ -1224,10 +1232,10 @@ demoColorsDraw:
     shl ax, 3
     add ax, [wmContentY]
     add ax, 4
-    mov CX, si
-    mov DX, ax
-    mov SI, 7
-    mov DI, 7
+    mov CX, ax             ; CX=Y (row position)
+    mov DX, si             ; DX=X (col position)
+    mov SI, 7              ; height
+    mov DI, 7              ; width
     mov ax, bp
     call plotBoxXY
     pop dx
@@ -1253,10 +1261,11 @@ BALL_SIZE   equ 6
 
 demoBounceDraw:
     pusha
-    mov CX, [wmContentX]
-    add CX, [ballX]
-    mov DX, [wmContentY]
-    add DX, [ballY]
+    ; plotBoxXY: CX=Y, DX=X, SI=height, DI=width
+    mov CX, [wmContentY]
+    add CX, [ballY]
+    mov DX, [wmContentX]
+    add DX, [ballX]
     mov SI, BALL_SIZE
     mov DI, BALL_SIZE
     mov AL, 0x0C
