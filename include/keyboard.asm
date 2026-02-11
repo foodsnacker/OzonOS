@@ -30,16 +30,15 @@ ret
 ; get last Scancode and show a 'c' on screen
 keyboardHandler:
 	pusha
-	cli
-	
+
     in AL,0x60               ; Read the scan code
 	mov [scancode],AL        ; Save it
 
-    mov AL, 0x61
+    mov AL, 0x20             ; Non-specific EOI
     out 0x20, AL
-    
+
     popa
-retf
+iret
 
 align 2
 scancode: db 0

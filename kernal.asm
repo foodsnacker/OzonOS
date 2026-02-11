@@ -22,10 +22,11 @@ kernalStart:
 	call switchMode13h			; switch to MCGA 320x200
 
 	; Draw init screen background
+	; plotBoxXY: CX=Y, DX=X, SI=height, DI=width
 	mov CX, 0
 	mov DX, 0
-	mov SI, 320
-	mov DI, 200
+	mov SI, 200
+	mov DI, 320
 	mov AL, 0x16				; medium grey
 	call plotBoxXY
 
