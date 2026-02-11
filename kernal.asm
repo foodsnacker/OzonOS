@@ -132,16 +132,12 @@ kernalStart:
 .mouse_done:
 
     ; --- Cooperative multitasking: tick animations ---
-    ; Bouncing ball tick (only updates data, redraw happens via window system)
+    ; Bouncing ball tick (only updates position data)
+    ; Visual update happens on next window interaction (drag, click, etc.)
     inc word [tickCounter]
     test word [tickCounter], 0x07   ; every 8th tick
     jnz .no_tick
     call demoBounceTick
-    ; Only redraw if a bounce window is open (check winCount > 0)
-    ; Light redraw: just redraw all windows
-    cmp byte [winCount], 0
-    je .no_tick
-    call wmRedrawAll
 .no_tick:
 
     jmp .main_loop              ; Endless main loop

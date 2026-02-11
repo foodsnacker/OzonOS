@@ -38,6 +38,9 @@ winDragOffsY:   dw 0
 ;------------------------------------------------------
 wmInit:
     pusha
+    cli                        ; Disable interrupts during screen init
+    call plotMouseBack         ; Hide mouse cursor before redraw
+
     ; plotBoxXY: CX=Y, DX=X, SI=height, DI=width
     mov CX, 0              ; Y=0
     mov DX, 0              ; X=0
@@ -62,8 +65,9 @@ wmInit:
     mov byte [winCount], 0
     mov byte [winDragIdx], 0xFF
     call wmDrawDesktopIcons
-    call saveMouseBackground
-    call plotMouse
+    call saveMouseBackground   ; Save background at cursor position
+    call plotMouse             ; Show cursor
+    sti                        ; Re-enable interrupts
     popa
     ret
 
@@ -361,6 +365,8 @@ wmWindowToBack:
 ;------------------------------------------------------
 wmRedrawAll:
     pusha
+    cli                        ; Disable interrupts during redraw
+    call plotMouseBack         ; Hide mouse cursor before redraw
 
     ; plotBoxXY: CX=Y, DX=X, SI=height, DI=width
     mov CX, 10             ; Y=10 (below title bar)
@@ -404,8 +410,9 @@ wmRedrawAll:
     loop .drawLoop
 
 .noneOpen:
-    call saveMouseBackground
-    call plotMouse
+    call saveMouseBackground   ; Save background at cursor position
+    call plotMouse             ; Show cursor
+    sti                        ; Re-enable interrupts
     popa
     ret
 
